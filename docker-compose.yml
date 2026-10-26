@@ -1,0 +1,31 @@
+services:
+  needle-metacog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: needle-discord-metacog
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=32M,mode=1777
+    volumes:
+      - ./contracts:/app/contracts:ro
+      - ./proto:/app/proto:ro
+      - needle_vault_data:/data
+    environment:
+      - NEEDLE_TELEMETRY=0
+      - DO_NOT_TRACK=1
+      - SQLX_OFFLINE=true
+      - PORT=8080
+      - DATABASE_URL=sqlite:///data/knowledge_vault.db
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 128M
+
+volumes:
+  needle_vault_data:

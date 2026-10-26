@@ -1,0 +1,41 @@
+[package]
+name = "needle-discord-metacog"
+version = "3.1.0"
+edition = "2021"
+rust-version = "1.82"
+description = "Rust Discord Bot Engine, Metacognition Assistance Tools & LiveVoice Module for cactus-compute/needle"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+tokio = { version = "1.41", features = ["full"] }
+tonic = { version = "0.12", features = ["tls"] }
+prost = "0.13"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+schemars = "0.8"
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", "macros"] }
+poise = "0.6"
+serenity = { version = "0.12", features = ["client", "gateway", "rustls_backend", "model", "voice"] }
+songbird = { version = "0.4", features = ["receive", "builtin-queue"] }
+audiopus = "0.3.0-rc.0"
+rubato = "0.16"
+argon2 = "0.5"
+ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+secrecy = { version = "0.10", features = ["serde"] }
+zeroize = { version = "1.8", features = ["derive"] }
+regex = "1.11"
+uuid = { version = "1.11", features = ["v4", "serde"] }
+thiserror = "2.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+[build-dependencies]
+tonic-build = "0.12"
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

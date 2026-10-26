@@ -1,0 +1,11 @@
+name: needle-discord-metacog
+runtime: rust
+build_command: SQLX_OFFLINE=true NEEDLE_TELEMETRY=0 DO_NOT_TRACK=1 cargo build --release
+start_command: ./target/release/needle-discord-metacog
+port: 8080
+healthcheck_path: /healthz
+env:
+  NEEDLE_TELEMETRY: "0"
+  DO_NOT_TRACK: "1"
+  SQLX_OFFLINE: "true"
+  RUST_LOG: "info"

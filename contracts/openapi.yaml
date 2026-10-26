@@ -1,0 +1,99 @@
+openapi: 3.1.0
+info:
+  title: Cactus Needle Metacognition & LiveVoice Sidecar API
+  version: 3.1.0
+  description: Deterministic offline-first contract for Needle 3 (CQ2 SAN) & Needle 2 (14MB Core).
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      summary: Liveness and QSS-U State B contract readiness probe
+      responses:
+        '200':
+          description: Service healthy and contracts verified
+  /metrics:
+    get:
+      operationId: exportMetrics
+      summary: Lock-free Prometheus metrics exposition
+      responses:
+        '200':
+          description: Prometheus text format metrics
+  /api/embed:
+    post:
+      operationId: computeEmbedding
+      summary: Compute 3,072-dimensional on-device text embedding via Needle 3
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmbedRequest'
+      responses:
+        '200':
+          description: 3072-d vector output
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbedResponse'
+  /api/metacog/turn:
+    post:
+      operationId: executeMetacogTurn
+      summary: Execute grammar-constrained Needle tool call and update Channel 2 state
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetacogTurnRequest'
+      responses:
+        '200':
+          description: Dual-channel Generative Passage output
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetacogTurnResponse'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: PASETOv4
+  schemas:
+    EmbedRequest:
+      type: object
+      required: [text, model_generation]
+      properties:
+        text: { type: string, minLength: 1 }
+        model_generation: { type: integer, enum: [2, 3], default: 3 }
+    EmbedResponse:
+      type: object
+      required: [dimension, vector]
+      properties:
+        dimension: { type: integer, const: 3072 }
+        vector:
+          type: array
+          items: { type: number, format: float }
+    MetacogTurnRequest:
+      type: object
+      required: [session_id, user_id, utterance, language]
+      properties:
+        session_id: { type: string, format: uuid }
+        user_id: { type: string }
+        utterance: { type: string }
+        language: { type: string, enum: [EN, CZ], default: EN }
+        prosodic_pause_ms: { type: integer, default: 0 }
+    MetacogTurnResponse:
+      type: object
+      required: [channel_1_vocal, channel_2_scratchpad, confidence, suppressed_calls]
+      properties:
+        channel_1_vocal: { type: string, maxLength: 420 }
+        channel_2_scratchpad: { type: object }
+        confidence: { type: number, format: float }
+        requires_human_confirmation: { type: boolean }
+        suppressed_calls:
+          type: array
+          items: { type: string }

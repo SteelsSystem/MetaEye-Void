@@ -1,0 +1,121 @@
+syntax = "proto3";
+package needle.metacog.v3;
+
+service AuthService {
+  rpc AuthenticateDiscordUser (AuthRequest) returns (AuthResponse);
+  rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc RotateToken (RotateTokenRequest) returns (AuthResponse);
+  rpc RevokeToken (RevokeTokenRequest) returns (RevokeTokenResponse);
+}
+
+service MetacogEngineService {
+  rpc DispatchTurn (MetacogTurnProtoRequest) returns (MetacogTurnProtoResponse);
+  rpc HotSwapModel (HotSwapRequest) returns (HotSwapResponse);
+  rpc VerifyShorthandMacro (VerifyMacroRequest) returns (VerifyMacroResponse);
+}
+
+service LiveVoiceService {
+  rpc StreamVoiceInterlock (stream VoiceClientFrame) returns (stream VoiceServerFrame);
+}
+
+message AuthRequest {
+  string discord_snowflake = 1;
+  bytes ed25519_signature = 2;
+  bytes challenge_nonce = 3;
+}
+
+message ValidateTokenRequest {
+  string paseto_access_token = 1;
+  string expected_user_id = 2;
+  string expected_session_id = 3;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  string role = 2;
+}
+
+message RotateTokenRequest {
+  string refresh_token = 1;
+}
+
+message RevokeTokenRequest {
+  string token_id = 1;
+}
+
+message RevokeTokenResponse {
+  bool revoked = 1;
+}
+
+message AuthResponse {
+  bool authorized = 1;
+  string paseto_access_token = 2;
+  string refresh_token = 3;
+  string error_code = 4;
+}
+
+message MetacogTurnProtoRequest {
+  string session_id = 1;
+  string user_id = 2;
+  string utterance = 3;
+  string language_code = 4;
+  uint32 prosodic_pause_ms = 5;
+  uint32 word_repetitions = 6;
+}
+
+message ToolCallRecord {
+  string tool_name = 1;
+  string arguments_json = 2;
+  float confidence = 3;
+  bool suppressed = 4;
+}
+
+message MetacogTurnProtoResponse {
+  string channel_1_spoken_text = 1;
+  string channel_2_state_json = 2;
+  float calibrated_confidence = 3;
+  bool awaiting_sovereign_confirmation = 4;
+  repeated ToolCallRecord function_calls = 5;
+  repeated ToolCallRecord suppressed_calls = 6;
+  float voe_surprisal_nats = 7;
+}
+
+message HotSwapRequest {
+  string session_id = 1;
+  uint32 target_generation = 2;
+  uint32 active_layers = 3;
+}
+
+message HotSwapResponse {
+  bool success = 1;
+  uint32 active_generation = 2;
+  uint32 active_layers = 3;
+  uint64 switch_latency_micros = 4;
+}
+
+message VerifyMacroRequest {
+  string session_id = 1;
+  string macro_trigger = 2;
+  bool approved_by_sovereign_i = 3;
+}
+
+message VerifyMacroResponse {
+  bool warrant_verified = 1;
+  string macro_id = 2;
+}
+
+message VoiceClientFrame {
+  string session_id = 1;
+  uint64 sequence = 2;
+  bytes pcm_16khz_mono = 3;
+  bool client_barge_in = 4;
+}
+
+message VoiceServerFrame {
+  uint64 sequence = 1;
+  bytes opus_48khz_stereo = 2;
+  string transcript_repaired = 3;
+  string channel_1_text = 4;
+  string channel_2_scratchpad_json = 5;
+  string vad_state = 6;
+}
