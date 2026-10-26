@@ -1,0 +1,90 @@
+{
+  "db": "SQLite",
+  "version": "0.8.0",
+  "queries": {
+    "select_session_by_id": {
+      "query": "SELECT session_id, user_id, active_model_gen, active_language, biocomputer_level, maze_stage, lock_opacity_state, precision_gamma, meta_d_prime, primary_d_prime, tap_in_state, channel_2_json FROM sessions WHERE session_id = ?1",
+      "describe": {
+        "columns": [
+          {
+            "name": "session_id",
+            "ordinal": 0,
+            "type_info": "Text"
+          },
+          {
+            "name": "user_id",
+            "ordinal": 1,
+            "type_info": "Text"
+          },
+          {
+            "name": "active_model_gen",
+            "ordinal": 2,
+            "type_info": "Int64"
+          },
+          {
+            "name": "active_language",
+            "ordinal": 3,
+            "type_info": "Text"
+          },
+          {
+            "name": "biocomputer_level",
+            "ordinal": 4,
+            "type_info": "Int64"
+          },
+          {
+            "name": "maze_stage",
+            "ordinal": 5,
+            "type_info": "Text"
+          },
+          {
+            "name": "lock_opacity_state",
+            "ordinal": 6,
+            "type_info": "Text"
+          },
+          {
+            "name": "precision_gamma",
+            "ordinal": 7,
+            "type_info": "Float"
+          },
+          {
+            "name": "meta_d_prime",
+            "ordinal": 8,
+            "type_info": "Float"
+          },
+          {
+            "name": "primary_d_prime",
+            "ordinal": 9,
+            "type_info": "Float"
+          },
+          {
+            "name": "tap_in_state",
+            "ordinal": 10,
+            "type_info": "Text"
+          },
+          {
+            "name": "channel_2_json",
+            "ordinal": 11,
+            "type_info": "Text"
+          }
+        ],
+        "parameters": {
+          "Right": 1
+        },
+        "nullable": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    }
+  }
+}
